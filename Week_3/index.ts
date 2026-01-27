@@ -20,7 +20,7 @@ server.get("/api/names", async function (_req: Request, res: Response): Promise<
 });
 
 server.get("/api/weather/:zipcode", function (req: Request, res: Response): void {
-  const zipcode = Array.isArray(req.params.zipcode) ? req.params.zipcode[0] : req.params.zipcode;
+  const zipcode = req.params.zipcode as string;
   const response = routeWeather({ zipcode });
   res.send(response);
 });

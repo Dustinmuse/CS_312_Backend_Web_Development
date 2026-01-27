@@ -28,7 +28,7 @@ server.get("/api/names", function (_req, res) {
     });
 });
 server.get("/api/weather/:zipcode", function (req, res) {
-    const zipcode = Array.isArray(req.params.zipcode) ? req.params.zipcode[0] : req.params.zipcode;
+    const zipcode = req.params.zipcode;
     const response = routeWeather({ zipcode });
     res.send(response);
 });
