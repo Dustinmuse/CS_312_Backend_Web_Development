@@ -1,33 +1,31 @@
 import { WeatherInterface } from "../mongoose/weather/interface";
 import { findByZip, updateByZip } from "../mongoose/weather/services";
 
-type WeatherResult = WeatherInterface & { advisory?: string | null };
-
-// Strip null values so GraphQL list responses are always clean arrays.
-function compactData(items: Array<WeatherResult | null>): WeatherResult[] {
-  return items.filter((item): item is WeatherResult => item !== null);
+// GraphQL field resolvers can return nulls from DB lookups; strip them before returning.
+function compactData(items: Array<WeatherInterface | null>): WeatherInterface[] {
+  return items.filter((item): item is WeatherInterface => item !== null);
 }
 
 export const resolvers = {
   Query: {
-    // Return a list with one item (or empty list) to match schema return type.
     weather: async (_: unknown, param: { zip: string }) => {
       const data = await findByZip(param.zip);
+      // Schema returns a list, so wrap single lookup result in an array.
       return compactData([data]);
     },
   },
   Mutation: {
-    // Update one record, then read it back so mutation returns current DB state.
     weather: async (_: unknown, param: { data: Partial<WeatherInterface> & { zip: string } }) => {
       await updateByZip(param.data.zip, param.data);
       const data = await findByZip(param.data.zip);
+      // Return updated record in list form to match mutation return type.
       return compactData([data]);
     },
   },
   LocationWeatherType: {
-    // "friends" is stored as zip strings; resolve each zip into a weather object.
-    friends: async (parent: WeatherResult) => {
+    friends: async (parent: WeatherInterface) => {
       if (!parent.friends?.length) return [];
+      // "friends" is stored as zip strings; resolve each zip to a weather document.
       const friends = await Promise.all(parent.friends.map((zip) => findByZip(zip)));
       return compactData(friends);
     },

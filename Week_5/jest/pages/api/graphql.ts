@@ -13,7 +13,7 @@ const server = new ApolloServer({
 
 const handler = startServerAndCreateNextHandler(server);
 
-// Minimal CORS + method guard for browser and API-client calls.
+// Allow GraphQL IDEs and browser clients to call this endpoint from any origin.
 const allowCors = (fn: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader("Allow", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -35,18 +35,10 @@ const allowCors = (fn: NextApiHandler) => async (req: NextApiRequest, res: NextA
   return await fn(req, res);
 };
 
-// Ensure DB is ready for every GraphQL request before executing resolvers.
+// Ensure Mongo memory DB is connected before GraphQL resolvers run.
 const connectDB = (fn: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    await dbConnect();
-  } catch (error) {
-    console.error("Failed to connect to MongoDB memory server:", error);
-    return res.status(500).json({
-      error:
-        "Database connection failed. If this is your first run, mongodb-memory-server may still be downloading MongoDB binaries.",
-    });
-  }
+  await dbConnect();
   return await fn(req, res);
 };
 
-export default allowCors(connectDB(handler));
+export default connectDB(allowCors(handler));
