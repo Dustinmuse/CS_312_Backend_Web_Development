@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 169 50" role="img" aria-labelledby="title desc">
+  <title id="title">Grub Hunter Logo</title>
+  <desc id="desc">Simple text logo for Grub Hunter</desc>
+  <rect width="169" height="50" rx="8" fill="#f5f5f5"/>
+  <text x="84.5" y="31" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#222">
+    GrubHunter
+  </text>
+</svg>

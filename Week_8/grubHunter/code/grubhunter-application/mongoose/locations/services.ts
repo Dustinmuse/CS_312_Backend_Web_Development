@@ -10,7 +10,8 @@ type LocationQueryFilter = Record<string, unknown>;
 
 async function findLocations(filter: LocationQueryFilter) {
   await dbConnect();
-  return LocationModel.find(filter).lean().exec();
+  const docs = await LocationModel.find(filter);
+  return docs.map((d) => d.toObject());
 }
 
 export async function findAllLocations() {
@@ -25,7 +26,7 @@ export async function findWishlistLocations({ userId }: FindWishlistLocationsPar
   return findLocations({ on_wishlist: userId });
 }
 
-export async function updateWishlistForUser({ locationId, userId, action }: UpdateWishlistParams) {
+export async function updateWishlist({ locationId, userId, action }: UpdateWishlistParams) {
   await dbConnect();
 
   const update =
@@ -33,7 +34,5 @@ export async function updateWishlistForUser({ locationId, userId, action }: Upda
 
   return LocationModel.findOneAndUpdate({ location_id: locationId }, update, {
     new: true,
-  })
-    .lean()
-    .exec();
+  });
 }
