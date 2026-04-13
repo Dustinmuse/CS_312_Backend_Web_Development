@@ -3,12 +3,17 @@ import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import "../styles/layout.css";
 import Layout from "@/components/layout";
+import { SessionProvider } from "next-auth/react";
 
 const GrubHunterApp = ({ Component, pageProps }: AppProps) => {
+  const { session, ...rest } = pageProps;
+
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <SessionProvider session={session}>
+      <Layout>
+        <Component {...rest} />
+      </Layout>
+    </SessionProvider>
   );
 };
 
