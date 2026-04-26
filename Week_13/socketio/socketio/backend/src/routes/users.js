@@ -17,6 +17,8 @@ export function userRoutes(app) {
       const token = await loginUser(req.body)
       return res.status(200).send({ token })
     } catch (err) {
+      const username = req.body?.username || 'unknown'
+      console.error(`login failed for user "${username}":`, err.message)
       return res.status(400).send({
         error: 'login failed, did you enter the correct username/password?',
       })

@@ -8,6 +8,7 @@ services:
     environment:
       - PORT=3001
       - DATABASE_URL=mongodb://host.docker.internal:27017/blog
+      - JWT_SECRET=dev_jwt_secret_change_me
     ports:
       - '3001:3001'
     depends_on:
@@ -15,9 +16,15 @@ services:
   blog-frontend:
     build:
       context: .
+      target: build
       args:
         VITE_BACKEND_URL: http://localhost:3001/api/v1
+        VITE_SOCKET_HOST: http://localhost:3001
+    command: npm run dev -- --host 0.0.0.0 --port 5173
     ports:
-      - '3000:80'
+      - '5173:5173'
+    volumes:
+      - ./:/build
+      - /build/node_modules
     depends_on:
       - blog-backend

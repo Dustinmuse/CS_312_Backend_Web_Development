@@ -41,6 +41,8 @@ To run a database service, the backend and the frontend in Docker Compose, execu
 docker compose up
 ```
 
+This starts the frontend as a Vite development server on `http://localhost:5173`.
+
 ## Building the Docker image
 
 To build the Docker image for the frontend, run the following command:
